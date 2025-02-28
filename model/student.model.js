@@ -58,18 +58,21 @@ const studentSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Student', // Confirmed connections
+      default:[]
     },
   ],
   pendingRequests: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Student', // Incoming connection requests
+      ref: 'Student',
+      default:[] // Incoming connection requests
     },
   ],
   sentRequests: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Student', // Sent connection requests
+      ref: 'Student',
+      default:[] // Sent connection requests
     },
   ]
 }, { timestamps: true });
