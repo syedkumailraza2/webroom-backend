@@ -1,4 +1,4 @@
-import studyMaterial from "../Model/studymaterial.model";
+import studyMaterial from "../Model/studymaterial.model.js";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 dotenv.config();
@@ -11,7 +11,7 @@ cloudinary.v2.config({
 });
 
 // Upload study material
-export const uploadstudyMaterial = async (req, res) => {
+const uploadstudyMaterial = async (req, res) => {
     try {
         console.log("🔹 Request Body:", req.body);
         console.log("🔹 Received File:", req.file);
@@ -46,7 +46,7 @@ export const uploadstudyMaterial = async (req, res) => {
 };
 
 // Get all study materials
-export const getAllstudyMaterials = async (req, res) => {
+ const getAllstudyMaterials = async (req, res) => {
     try {
         const materials = await studyMaterial.find();
         res.status(200).json(materials);
@@ -56,7 +56,7 @@ export const getAllstudyMaterials = async (req, res) => {
 };
 
 // Get a single study material by ID
-export const getstudyMaterialById = async (req, res) => {
+ const getstudyMaterialById = async (req, res) => {
     try {
         const material = await studyMaterial.findById(req.params.id);
         if (!material) return res.status(404).json({ message: "Study material not found" });
@@ -68,7 +68,7 @@ export const getstudyMaterialById = async (req, res) => {
 };
 
 // Update study material (including file replacement)
-export const updatestudyMaterial = async (req, res) => {
+ const updatestudyMaterial = async (req, res) => {
     try {
         const { id } = req.params;
         const existingMaterial = await studyMaterial.findById(id);
@@ -95,7 +95,7 @@ export const updatestudyMaterial = async (req, res) => {
 };
 
 // Delete study material (and remove file from Cloudinary)
-export const deletestudyMaterial = async (req, res) => {
+ const deletestudyMaterial = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -116,7 +116,7 @@ export const deletestudyMaterial = async (req, res) => {
 };
 
 // Search study materials
-export const searchstudyMaterials = async (req, res) => {
+const searchstudyMaterials = async (req, res) => {
     try {
         const { query, format, year } = req.query;
 
@@ -139,4 +139,13 @@ export const searchstudyMaterials = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error searching study materials", error: error.message });
     }
+};
+
+export {
+    uploadstudyMaterial,
+    getAllstudyMaterials,
+    getstudyMaterialById,
+    updatestudyMaterial, // This was missing in the export
+    deletestudyMaterial, // Make sure the import name matches this in the router
+    searchstudyMaterials
 };

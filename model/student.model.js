@@ -24,6 +24,9 @@ const studentSchema = new mongoose.Schema({
   phone_no: {
     type: String,
   },
+  image:{
+    type:String,
+  },
   course: {
     type: String,
   },
