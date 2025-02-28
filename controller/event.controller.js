@@ -1,3 +1,6 @@
+import Event from "../model/event.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+
 const addEvent = ()=>{
     async (req, res) => {
         try {
