@@ -10,8 +10,9 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_API_SECRET 
 });
 
+
 // Upload study material
-export const uploadstudyMaterial = async (req, res) => {
+export const uploadStudyMaterial = async (req, res) => {
     try {
         console.log("🔹 Request Body:", req.body);
         console.log("🔹 Received File:", req.file);
@@ -46,7 +47,7 @@ export const uploadstudyMaterial = async (req, res) => {
 };
 
 // Get all study materials
-export const getAllstudyMaterials = async (req, res) => {
+export const getAllStudyMaterial = async (req, res) => {
     try {
         const materials = await studyMaterial.find();
         res.status(200).json(materials);
@@ -68,7 +69,7 @@ export const getstudyMaterialById = async (req, res) => {
 };
 
 // Update study material (including file replacement)
-export const updatestudyMaterial = async (req, res) => {
+export const updateStudyMaterial = async (req, res) => {
     try {
         const { id } = req.params;
         const existingMaterial = await studyMaterial.findById(id);
@@ -116,7 +117,7 @@ export const deletestudyMaterial = async (req, res) => {
 };
 
 // Search study materials
-export const searchstudyMaterials = async (req, res) => {
+export const searchStudyMaterial = async (req, res) => {
     try {
         const { query, format, year } = req.query;
 
