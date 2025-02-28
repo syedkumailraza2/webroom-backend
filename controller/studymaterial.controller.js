@@ -12,7 +12,7 @@ cloudinary.v2.config({
 
 
 // Upload study material
-export const uploadstudyMaterial = async (req, res) => {
+ const uploadstudyMaterial = async (req, res) => {
     try {
         console.log("🔹 Request Body:", req.body);
         console.log("🔹 Received File:", req.file);
@@ -47,7 +47,7 @@ export const uploadstudyMaterial = async (req, res) => {
 };
 
 // Get all study materials
-export const getAllstudyMaterials = async (req, res) => {
+ const getAllstudyMaterials = async (req, res) => {
     try {
         const materials = await studyMaterial.find();
         res.status(200).json(materials);
@@ -69,7 +69,7 @@ export const getAllstudyMaterials = async (req, res) => {
 };
 
 // Update study material (including file replacement)
-export const updatestudyMaterial = async (req, res) => {
+const updatestudyMaterial = async (req, res) => {
     try {
         const { id } = req.params;
         const existingMaterial = await studyMaterial.findById(id);
@@ -117,7 +117,7 @@ export const updatestudyMaterial = async (req, res) => {
 };
 
 // Search study materials
-export const searchstudyMaterials = async (req, res) => {
+ const searchstudyMaterials = async (req, res) => {
     try {
         const { query, format, year } = req.query;
 
@@ -141,12 +141,11 @@ export const searchstudyMaterials = async (req, res) => {
         res.status(500).json({ message: "Error searching study materials", error: error.message });
     }
 };
-
-export {
+export  {
     uploadstudyMaterial,
     getAllstudyMaterials,
     getstudyMaterialById,
-    updatestudyMaterial, // This was missing in the export
-    deletestudyMaterial, // Make sure the import name matches this in the router
-    searchstudyMaterials
+    updatestudyMaterial,
+    deletestudyMaterial, // ✅ Make sure this matches the name used in the route file
+    searchstudyMaterials,
 };

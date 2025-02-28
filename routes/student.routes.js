@@ -5,3 +5,5 @@ import { upload } from "../middleware/multer.middleware.js"
 const path = Router()
 
 path.post('/register',register)
+
+export default path
