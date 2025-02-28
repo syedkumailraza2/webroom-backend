@@ -14,23 +14,28 @@ const addEvent = async (req, res) => {
         console.log("Received Files:", req.files); // Debugging line
 
         // Ensure files exist
-        const posterBuff = req.files?.["poster"]?.[0]?.buffer;
-        const brochureBuff = req.files?.["brochure"]?.[0]?.buffer;
+        // const posterBuff = req.files?.["poster"]?.[0]?.buffer;
+        // const brochureBuff = req.files?.["brochure"]?.[0]?.buffer;
 
-        if (!posterBuff) return res.status(400).json({ message: "Poster is required" });
-        if (!brochureBuff) return res.status(400).json({ message: "Brochure is required" });
+        // if (!posterBuff) return res.status(400).json({ message: "Poster is required" });
+        // if (!brochureBuff) return res.status(400).json({ message: "Brochure is required" });
 
-        console.log("Uploading Poster to Cloudinary...");
-        const poster = await uploadOnCloudinary(posterBuff, 'image');
-        if (!poster || !poster.secure_url) {
-            return res.status(400).json({ message: "Failed to upload poster" });
-        }
+        // console.log("Uploading Poster to Cloudinary...");
+        // const poster = await uploadOnCloudinary(posterBuff, 'image');
+        // if (!poster || !poster.secure_url) {
+        //     return res.status(400).json({ message: "Failed to upload poster" });
+        // }
 
-        console.log("Uploading Brochure to Cloudinary...");
-        const brochure = await uploadOnCloudinary(brochureBuff, 'pdf');
-        if (!brochure || !brochure.secure_url) {
-            return res.status(400).json({ message: "Failed to upload brochure" });
-        }
+        // console.log("Uploading Brochure to Cloudinary...");
+        // const brochure = await uploadOnCloudinary(brochureBuff, 'pdf');
+        // if (!brochure || !brochure.secure_url) {
+        //     return res.status(400).json({ message: "Failed to upload brochure" });
+        // }
+
+        const poster = req.files?.poster[0]?.filename;
+        const brochure = req.files?.brochure[0]?.filename;
+        
+        
 
         // Save event to DB
         const event = new Event({
@@ -38,9 +43,10 @@ const addEvent = async (req, res) => {
             date,
             description,
             register,
-            poster: poster.secure_url,
-            brochure: brochure.secure_url
+            poster: `http://localhost:3000/public/temp/${poster}`,
+            brochure: `http://localhost:3000/public/temp/${brochure}`
         });
+        
 
         await event.save();
 
@@ -81,7 +87,7 @@ const updateEvent = async (req, res) => {
         }
 
         if(brochureBuff){
-            const brochure = await uploadOnCloudinary(brochureBuff, 'pdf');
+            const brochure = await uploadOnCloudinary(brochureBuff, 'image');
             if(brochure) event.brochure = brochure.secure_url;
         }
         
