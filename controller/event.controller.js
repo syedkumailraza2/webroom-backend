@@ -1,3 +1,6 @@
+import Event from "../model/event.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+
 const addEvent = ()=>{
     async (req, res) => {
         try {
@@ -24,7 +27,7 @@ const addEvent = ()=>{
                 return res.status(400).json({ message: "Poster is required" });
             }
     
-            const poster = await uploadOnCloudinary(posterBuff)
+            const poster = await uploadOnCloudinary(posterBuff,'image')
             if (!poster) {
                 return res.status(400).json({ message: "Failed to upload poster" });
             }
@@ -34,7 +37,7 @@ const addEvent = ()=>{
                 return res.status(400).json({ message: "Brochure is required" });
             }
     
-            const brochure = await uploadOnCloudinary(brochureBuff)
+            const brochure = await uploadOnCloudinary(brochureBuff,'pdf')
             if (!brochure) {
                 return res.status(400).json({ message: "Failed to upload Brochure" });
             }
@@ -46,7 +49,8 @@ const addEvent = ()=>{
                 date,
                 description,
                 register: register,
-                poster:poster.secure_url
+                poster:poster.secure_url,
+                brochure:brochure.secure_url
             })
     
             await event.save();

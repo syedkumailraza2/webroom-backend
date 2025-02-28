@@ -5,6 +5,3 @@ import { upload } from "../middleware/multer.middleware.js"
 const path = Router()
 
 path.post('/register',register)
-path.post('/login',loginStudent)
-path.put('/:id',protect,upload.single("image"),updateStudentProfile)
-export default path

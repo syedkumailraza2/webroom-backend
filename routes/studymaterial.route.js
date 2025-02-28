@@ -1,15 +1,14 @@
 import express from 'express';
 import multer from 'multer';
 
-import {
-    uploadstudyMaterial,
-    getAllstudyMaterials,
-    getstudyMaterialById,
-    updatestudyMaterial,
-    deletestudyMaterial, 
-    searchstudyMaterials
-} from "../Controller/studymaterial.controller.js";
-
+import { 
+    uploadStudyMaterial, 
+    getAllStudyMaterials, 
+    getStudyMaterialById, 
+    updateStudyMaterial, 
+    deleteStudyMaterial,
+    searchStudyMaterials
+} from '../Controller/studymaterial.controller.js';
 
 const router = express.Router();
 
