@@ -1,6 +1,7 @@
-import studyMaterial from "../Model/studymaterial.model.js";
-import cloudinary from "cloudinary";
+import StudyMaterial from '../Model/studyMaterial.model.js';
+import cloudinary from 'cloudinary';
 import dotenv from "dotenv";
+
 dotenv.config();
 
 // Configure Cloudinary
@@ -10,9 +11,8 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_API_SECRET 
 });
 
-
-// Upload study material
-const uploadstudyMaterial = async (req, res) => {
+// ✅ Upload Study Material
+export const uploadStudyMaterial = async (req, res) => {
     try {
         console.log("🔹 Request Body:", req.body);
         console.log("🔹 Received File:", req.file);
@@ -23,15 +23,13 @@ const uploadstudyMaterial = async (req, res) => {
             return res.status(400).json({ message: "All fields (name, format, tech, author, course, year, type, file) are required!" });
         }
 
-        // Convert buffer to base64 for Cloudinary upload
         const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-        const result = await cloudinary.uploader.upload(fileBase64, { resource_type: "auto" });
+        const result = await cloudinary.v2.uploader.upload(fileBase64, { resource_type: "auto" });
 
-        // Save file details to MongoDB
-        const newMaterial = new studyMaterial({
+        const newMaterial = new StudyMaterial({
             name,
             format,
-            url: result.secure_url, // Store Cloudinary URL in DB
+            url: result.secure_url,
             tech,
             author,
             course,
@@ -40,7 +38,6 @@ const uploadstudyMaterial = async (req, res) => {
         });
 
         await newMaterial.save();
-
         res.status(201).json({ message: "Study material uploaded successfully", data: newMaterial });
 
     } catch (error) {
@@ -49,20 +46,20 @@ const uploadstudyMaterial = async (req, res) => {
     }
 };
 
-// Get all study materials
- const getAllstudyMaterials = async (req, res) => {
+// ✅ Get All Study Materials
+export const getAllStudyMaterials = async (req, res) => {
     try {
-        const materials = await studyMaterial.find();
+        const materials = await StudyMaterial.find();
         res.status(200).json(materials);
     } catch (error) {
         res.status(500).json({ message: "Error retrieving study materials", error: error.message });
     }
 };
 
-// Get a single study material by ID
- const getstudyMaterialById = async (req, res) => {
+// ✅ Get a Single Study Material by ID
+export const getStudyMaterialById = async (req, res) => {
     try {
-        const material = await studyMaterial.findById(req.params.id);
+        const material = await StudyMaterial.findById(req.params.id);
         if (!material) return res.status(404).json({ message: "Study material not found" });
 
         res.status(200).json(material);
@@ -71,26 +68,37 @@ const uploadstudyMaterial = async (req, res) => {
     }
 };
 
-// Update study material (including file replacement)
-const updatestudyMaterial = async (req, res) => {
+// ✅ Update Study Material (Including File Replacement)
+export const updateStudyMaterial = async (req, res) => {
     try {
         const { id } = req.params;
-        const existingMaterial = await studyMaterial.findById(id);
+        const existingMaterial = await StudyMaterial.findById(id);
         if (!existingMaterial) return res.status(404).json({ message: "Study material not found" });
 
         let fileUrl = existingMaterial.url;
 
         if (req.file) {
+            // Extract the public ID from the URL
             const oldFilePublicId = fileUrl.split('/').pop().split('.')[0];
-            await cloudinary.v2.uploader.destroy(oldFilePublicId, { resource_type: "auto" });
+            let resourceType = "raw";
+            if (existingMaterial.type.startsWith("image")) resourceType = "image";
+            if (existingMaterial.type.startsWith("video")) resourceType = "video";
 
+            // Delete the old file from Cloudinary
+            await cloudinary.v2.uploader.destroy(oldFilePublicId, { resource_type: resourceType });
+
+            // Upload new file
             const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
             const result = await cloudinary.v2.uploader.upload(fileBase64, { resource_type: "auto" });
 
             fileUrl = result.secure_url;
         }
 
-        const updatedMaterial = await studyMaterial.findByIdAndUpdate(id, { ...req.body, url: fileUrl }, { new: true });
+        const updatedMaterial = await StudyMaterial.findByIdAndUpdate(
+            id, 
+            { ...req.body, url: fileUrl }, 
+            { new: true }
+        );
 
         res.status(200).json({ message: "Study material updated successfully", data: updatedMaterial });
     } catch (error) {
@@ -98,29 +106,38 @@ const updatestudyMaterial = async (req, res) => {
     }
 };
 
-// Delete study material (and remove file from Cloudinary)
- const deletestudyMaterial = async (req, res) => {
+// ✅ Delete Study Material (Fixes Cloudinary Resource Type Issue)
+export const deleteStudyMaterial = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const material = await studyMaterial.findById(id);
+        const material = await StudyMaterial.findById(id);
         if (!material) return res.status(404).json({ message: "Study material not found" });
 
         const fileUrl = material.url;
         const publicId = fileUrl.split('/').slice(-1)[0].split('.')[0];
 
-        await cloudinary.v2.uploader.destroy(publicId, { resource_type: "auto" });
-        await studyMaterial.findByIdAndDelete(id);
+        // 🔹 Determine the correct resource type
+        let resourceType = "raw"; // Default for PDFs and documents
+        if (material.type.startsWith("image")) resourceType = "image";
+        if (material.type.startsWith("video")) resourceType = "video";
+
+        // 🔹 Delete file from Cloudinary
+        await cloudinary.v2.uploader.destroy(publicId, { resource_type: resourceType });
+
+        // 🔹 Remove the study material from the database
+        await StudyMaterial.findByIdAndDelete(id);
 
         res.status(200).json({ message: "Study material deleted successfully" });
 
     } catch (error) {
+        console.error("❌ Error deleting study material:", error);
         res.status(500).json({ message: "Error deleting study material", error: error.message });
     }
 };
 
-// Search study materials
- const searchstudyMaterials = async (req, res) => {
+// ✅ Search Study Materials
+export const searchStudyMaterials = async (req, res) => {
     try {
         const { query, format, year } = req.query;
 
@@ -138,17 +155,9 @@ const updatestudyMaterial = async (req, res) => {
         if (format) searchCriteria.format = format;
         if (year) searchCriteria.year = year;
 
-        const materials = await studyMaterial.find(searchCriteria);
+        const materials = await StudyMaterial.find(searchCriteria);
         res.status(200).json(materials);
     } catch (error) {
         res.status(500).json({ message: "Error searching study materials", error: error.message });
     }
-};
-export  {
-    uploadstudyMaterial,
-    getAllstudyMaterials,
-    getstudyMaterialById,
-    updatestudyMaterial,
-    deletestudyMaterial, // ✅ Make sure this matches the name used in the route file
-    searchstudyMaterials,
 };

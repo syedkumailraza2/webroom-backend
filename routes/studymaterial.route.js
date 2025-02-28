@@ -1,26 +1,26 @@
 import express from 'express';
 import multer from 'multer';
-
-import {
-    uploadstudyMaterial,
-    getAllstudyMaterials,
-    getstudyMaterialById,
-    updatestudyMaterial,
-    deletestudyMaterial,  // ✅ Ensure this matches exactly
-    searchstudyMaterials
-} from "../controller/studymaterial.controller.js";
-
+import { 
+    uploadStudyMaterial, 
+    getAllStudyMaterials, 
+    getStudyMaterialById, 
+    updateStudyMaterial, 
+    deleteStudyMaterial,
+    searchStudyMaterials
+} from '../controller/studymaterial.controller.js';
 
 const router = express.Router();
 
+// Configure Multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.post('/create', upload.single('file'), uploadstudyMaterial);
-router.get('/', getAllstudyMaterials);
-router.get('/search', searchstudyMaterials);
-router.get('/:id', getstudyMaterialById);
-router.put('/:id', upload.single('file'), updatestudyMaterial);
-router.delete('/:id', deletestudyMaterial);
+// Routes
+router.post('/create', upload.single('file'), uploadStudyMaterial);
+router.get('/', getAllStudyMaterials);
+router.get('/search', searchStudyMaterials);
+router.get('/:id', getStudyMaterialById);
+router.put('/:id', upload.single('file'), updateStudyMaterial);
+router.delete('/:id', deleteStudyMaterial);
 
 export default router;
