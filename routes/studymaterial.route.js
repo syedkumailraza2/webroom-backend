@@ -8,7 +8,7 @@ import {
     updateStudyMaterial, 
     deleteStudyMaterial,
     searchStudyMaterials
-} from '../Controller/studymaterial.controller.js';
+} from '../controller/studymaterial.controller.js';
 
 const router = express.Router();
 
