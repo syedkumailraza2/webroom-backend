@@ -12,7 +12,7 @@ cloudinary.v2.config({
 
 
 // Upload study material
- const uploadstudyMaterial = async (req, res) => {
+const uploadstudyMaterial = async (req, res) => {
     try {
         console.log("🔹 Request Body:", req.body);
         console.log("🔹 Received File:", req.file);
@@ -23,13 +23,15 @@ cloudinary.v2.config({
             return res.status(400).json({ message: "All fields (name, format, tech, author, course, year, type, file) are required!" });
         }
 
+        // Convert buffer to base64 for Cloudinary upload
         const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-        const result = await cloudinary.v2.uploader.upload(fileBase64, { resource_type: "auto" });
+        const result = await cloudinary.uploader.upload(fileBase64, { resource_type: "auto" });
 
+        // Save file details to MongoDB
         const newMaterial = new studyMaterial({
             name,
             format,
-            url: result.secure_url,
+            url: result.secure_url, // Store Cloudinary URL in DB
             tech,
             author,
             course,
@@ -38,6 +40,7 @@ cloudinary.v2.config({
         });
 
         await newMaterial.save();
+
         res.status(201).json({ message: "Study material uploaded successfully", data: newMaterial });
 
     } catch (error) {
