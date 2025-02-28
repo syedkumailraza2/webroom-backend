@@ -1,5 +1,5 @@
 import express from 'express';
-import multer from 'multer';
+import {upload} from '../middleware/multer.middleware.js'
 import { 
     uploadStudyMaterial, 
     getAllStudyMaterials, 
@@ -11,16 +11,12 @@ import {
 
 const router = express.Router();
 
-// Configure Multer for file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
 // Routes
-router.post('/create', upload.single('file'), uploadStudyMaterial);
+router.post('/create', upload.single('url'), uploadStudyMaterial);
 router.get('/', getAllStudyMaterials);
 router.get('/search', searchStudyMaterials);
 router.get('/:id', getStudyMaterialById);
-router.put('/:id', upload.single('file'), updateStudyMaterial);
+router.put('/:id', upload.single('url'), updateStudyMaterial);
 router.delete('/:id', deleteStudyMaterial);
 
 export default router;

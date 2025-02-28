@@ -1,10 +1,3 @@
-// import multer from "multer";
-
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage });
-
-// export { upload };
-
 import multer from "multer";
 import fs from "fs";
 import path from "path";
@@ -31,4 +24,5 @@ const storage = multer.diskStorage({
     }
 });
 
-export const upload = multer({ storage });
+const upload = multer({ storage });
+export {upload}

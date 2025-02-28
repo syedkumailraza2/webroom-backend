@@ -4,12 +4,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Configure Cloudinary
-cloudinary.v2.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_API_SECRET 
-});
 
 // ✅ Upload Study Material
 export const uploadStudyMaterial = async (req, res) => {
@@ -23,13 +17,12 @@ export const uploadStudyMaterial = async (req, res) => {
             return res.status(400).json({ message: "All fields (name, format, tech, author, course, year, type, file) are required!" });
         }
 
-        const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-        const result = await cloudinary.v2.uploader.upload(fileBase64, { resource_type: "auto" });
+        const result = req.file.filename;
 
         const newMaterial = new StudyMaterial({
             name,
             format,
-            url: result.secure_url,
+            url: `http://localhost:3000/public/temp/${result}`,
             tech,
             author,
             course,
@@ -79,19 +72,8 @@ export const updateStudyMaterial = async (req, res) => {
 
         if (req.file) {
             // Extract the public ID from the URL
-            const oldFilePublicId = fileUrl.split('/').pop().split('.')[0];
-            let resourceType = "raw";
-            if (existingMaterial.type.startsWith("image")) resourceType = "image";
-            if (existingMaterial.type.startsWith("video")) resourceType = "video";
-
-            // Delete the old file from Cloudinary
-            await cloudinary.v2.uploader.destroy(oldFilePublicId, { resource_type: resourceType });
-
-            // Upload new file
-            const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-            const result = await cloudinary.v2.uploader.upload(fileBase64, { resource_type: "auto" });
-
-            fileUrl = result.secure_url;
+            const result = req.file.filename;
+            fileUrl = `http://localhost:3000/public/temp/${result}`
         }
 
         const updatedMaterial = await StudyMaterial.findByIdAndUpdate(
