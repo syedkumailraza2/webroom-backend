@@ -4,3 +4,5 @@ import { register } from "../controller/student.controller.js"
 const path = Router()
 
 path.post('/register',register)
+
+export default path;
