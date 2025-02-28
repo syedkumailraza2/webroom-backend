@@ -1,4 +1,4 @@
-import express from "express"
+import express, { json } from "express"
 import cors from 'cors'
 import connectDB from "./config/db.js"
 import dotenv from "dotenv";
@@ -15,10 +15,14 @@ app.get('/', (req,res)=>{
     res.send('Hello World!')
 })
 
+//routes
 app.use("/notes", router);
 app.use("/projects", projectRoutes);
 app.use("/events",eventRoutes)
 
+//middleware
+app.use(cors())
+app.use(json())
 
 //Student Routes
 app.use("/student",path)

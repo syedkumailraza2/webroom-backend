@@ -4,7 +4,7 @@ import { upload } from "../middleware/multer.middleware.js";
 
 const eventRoutes = express.Router();
 
-eventRoutes.post("/", upload.fields([{ name: "poster", maxCount: 1 }, { name: "broucher", maxCount: 1 }]), addEvent);
+eventRoutes.post("/add-event", upload.fields([{ name: "poster", maxCount: 1 }, { name: "broucher", maxCount: 1 }]), addEvent);
 
 
 export default eventRoutes;
