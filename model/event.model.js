@@ -4,8 +4,8 @@ const EventSchema = new mongoose.Schema({
   name: { type: String, required: true },
   date: { type: String, required: true },
   description: { type: String, required: true },
-  brochure: {type:string, required:true},
-  register: {type:string, required:true},
+  brochure: { type:String, required:true },
+  register: {type:String, required:true},
   poster: { type:String, required:true } 
 }, { timestamps: true });
 

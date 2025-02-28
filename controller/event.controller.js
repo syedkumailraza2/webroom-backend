@@ -22,7 +22,9 @@ const addEvent = ()=>{
             }
     
             //add file to cloudinary
-            const posterBuff = req.files?.poster?.[0]?.buffer;
+            const posterBuff = req.files["poster"] ? req.files["poster"][0].buffer : null;
+        const broucherBuff = req.files["broucher"] ? req.files["broucher"][0].buffer : null;
+
             if (!posterBuff) {
                 return res.status(400).json({ message: "Poster is required" });
             }
@@ -32,12 +34,11 @@ const addEvent = ()=>{
                 return res.status(400).json({ message: "Failed to upload poster" });
             }
 
-            const brochureBuff = req.files?.brochure?.[0]?.buffer;
-            if (!brochureBuff) {
+            if (!broucherBuff) {
                 return res.status(400).json({ message: "Brochure is required" });
             }
     
-            const brochure = await uploadOnCloudinary(brochureBuff,'pdf')
+            const brochure = await uploadOnCloudinary(broucherBuff,'pdf')
             if (!brochure) {
                 return res.status(400).json({ message: "Failed to upload Brochure" });
             }
@@ -67,3 +68,5 @@ const addEvent = ()=>{
         }
     }
 }
+
+export {addEvent}

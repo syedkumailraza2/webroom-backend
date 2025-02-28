@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import router from "./routes/studymaterial.route.js";
 import projectRoutes from "./Routes/project.routes.js"
 import path from "./routes/student.routes.js"
+import eventRoutes from "./routes/event.routes.js";
 dotenv.config();
 
 const PORT = process.env.PORT || 8000
@@ -16,6 +17,7 @@ app.get('/', (req,res)=>{
 
 app.use("/notes", router);
 app.use("/projects", projectRoutes);
+app.use("/events",eventRoutes)
 
 
 //Student Routes
