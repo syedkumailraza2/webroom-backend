@@ -1,4 +1,4 @@
-import StudyMaterial from '../model/studyMaterial.model.js';
+import StudyMaterial from '../model/studymaterial.model.js';
 import cloudinary from 'cloudinary';
 import dotenv from "dotenv";
 
