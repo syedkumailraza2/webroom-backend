@@ -178,10 +178,6 @@ const deleteStudentByAdmin = async (req, res) => {
     }
 };
 
-
-
-
-
  const sendConnectionRequest = async (req, res) => {
     try {
       const { senderId, receiverId } = req.body;
@@ -264,7 +260,69 @@ const handleConnectionRequest = async (req, res) => {
   };
 
 
+// Search student by name and return name + PRN
+const searchStudent = async (req, res) => {
+    try {
+        const { name, course, year, skill, designation } = req.query;
 
+        // Ensure at least one search parameter is provided
+        if (!name && !course && !year && !skill && !designation) {
+            return res.status(400).json({ message: "Please provide at least one search parameter." });
+        }
+
+        // Build query object dynamically
+        const query = {};
+
+        if (name) {
+            query.name = { $regex: name, $options: "i" }; // Case-insensitive name search
+        }
+
+        if (course) {
+            query.course = { $regex: `^${course}$`, $options: "i" }; // Exact course match (case insensitive)
+        }
+
+        if (year) {
+            query.year = { $regex: `^${year}$`, $options: "i" }; // Exact year match
+        }
+
+        if (skill) {
+            query.skills = { $elemMatch: { $regex: `^${skill}$`, $options: "i" } }; // Ensure skill exists in array
+        }
+
+        if (designation) {
+            query.designation = { $regex: `^${designation}$`, $options: "i" }; // Exact designation match
+        }
+
+        // Fetch students based on query
+        const students = await Student.find(query)
+            .select("name prn_no course year skills designation") // Only return necessary fields
+            .limit(10); // Limit results to 10
+
+        if (students.length === 0) {
+            return res.status(404).json({ message: "No students found matching the criteria." });
+        }
+
+        res.json(students);
+    } catch (error) {
+        console.error("Error searching student:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
+  const getUserById = async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await Student.findById(userId); // Fetch user from database
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 
 
 export {
@@ -274,5 +332,7 @@ export {
     getStudentProfile,
     deleteStudentByAdmin,
     sendConnectionRequest,
-    handleConnectionRequest
+    handleConnectionRequest,
+    searchStudent,
+    getUserById
 }

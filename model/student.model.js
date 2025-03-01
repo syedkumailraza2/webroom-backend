@@ -45,6 +45,10 @@ const studentSchema = new mongoose.Schema({
       message: 'You can select up to 5 skills only',
     },
   },
+  bio:{
+  type:String,
+
+  },
   password: {
     type: String,
     required: [true, 'Password is required'],
