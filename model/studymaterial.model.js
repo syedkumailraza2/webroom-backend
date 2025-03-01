@@ -11,5 +11,5 @@ const studyMaterialSchema = new mongoose.Schema({
     type: { type: String, required: true },  // Type (Video, PDF, etc.)
 }, { timestamps: true });
 
-const StudyMaterial = mongoose.model('StudyMaterial', studyMaterialSchema);
-export default StudyMaterial;
+const Studymaterial = mongoose.model('StudyMaterial', studyMaterialSchema);
+export default Studymaterial;
