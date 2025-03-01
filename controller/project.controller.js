@@ -1,4 +1,4 @@
-import Project from "../Model/project.model.js";
+import Project from "../model/project.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 
