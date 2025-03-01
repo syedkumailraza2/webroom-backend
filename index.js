@@ -3,12 +3,12 @@ import cors from 'cors'
 import connectDB from "./config/db.js"
 import dotenv from "dotenv";
 import router from "./routes/studymaterial.route.js";
-import projectRoutes from "./Routes/project.routes.js"
+import projectRoutes from "./routes/project.routes.js"
 import path from "./routes/student.routes.js"
 import eventRoutes from "./routes/event.routes.js";
 dotenv.config();
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 3000
 
 const app = express()
 app.get('/', (req,res)=>{
